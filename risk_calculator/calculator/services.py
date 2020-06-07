@@ -26,74 +26,75 @@ def calculate_base_risk(risk, age, income):
 def calculate_auto_risk(base_risk, vehicle):
     if vehicle:
         if timezone.now().year - vehicle['year'] <= 5:
-            apolicy = base_risk + 1
+            policy = base_risk + 1
         else:
-            apolicy = base_risk
+            policy = base_risk
     else:
-        apolicy = None
+        policy = None
 
-    return apolicy
+    return policy
 
 def calculate_disability_risk(base_risk, income, age, house, dependents, marital_status):
     if income == 0 or age > 60:
-        apolicy = None
+        policy = None
     else:
-        apolicy = base_risk
+        policy = base_risk
 
         try:
             if house['ownership_status'] == 'mortgaged':
-                apolicy += 1
+                policy += 1
         except (TypeError, KeyError):
                 pass
 
         if dependents > 0:
-            apolicy += 1
+            policy += 1
 
         if marital_status == 'married':
-            apolicy -= 1
+            policy -= 1
 
-        if apolicy < 0:
-            apolicy = 0
+        if policy < 0:
+            policy = 0
 
-    return apolicy
+    return policy
 
 def calculate_home_risk(base_risk, house):
-    if house['ownership_status'] == 'mortgaged':
-        apolicy = base_risk + 1
-    elif house['ownership_status'] == 'owned':
-        apolicy = base_risk
+    if house:
+        if house['ownership_status'] == 'mortgaged':
+            policy = base_risk + 1
+        elif house['ownership_status'] == 'owned':
+            policy = base_risk
     else:
-        apolicy = None
+        policy = None
 
-    return apolicy
+    return policy
 
 def calculate_life_risk(base_risk, age, dependents, marital_status):
     if age > 60:
-        apolicy = None
+        policy = None
     else:
-        apolicy = base_risk
+        policy = base_risk
 
         if dependents > 0:
-            apolicy += 1
+            policy += 1
 
         if marital_status == 'married':
-            apolicy += 1
+            policy += 1
 
-    return apolicy
+    return policy
 
-def adapt_apolicy(apolicy):
-    if apolicy == None:
-        apolicy_type = INSURANCE_TYPE['INELIGIBLE']
-    elif apolicy <= 0:
-        apolicy_type = INSURANCE_TYPE['ECONOMIC']
-    elif apolicy == 1 or apolicy == 2:
-        apolicy_type = INSURANCE_TYPE['REGULAR']
-    elif apolicy >= 3:
-        apolicy_type = INSURANCE_TYPE['RESPONSIBLE']
+def adapt_policy(policy):
+    if policy == None:
+        policy_type = INSURANCE_TYPE['INELIGIBLE']
+    elif policy <= 0:
+        policy_type = INSURANCE_TYPE['ECONOMIC']
+    elif policy == 1 or policy == 2:
+        policy_type = INSURANCE_TYPE['REGULAR']
+    elif policy >= 3:
+        policy_type = INSURANCE_TYPE['RESPONSIBLE']
 
-    return apolicy_type
+    return policy_type
 
-def calculate_apolicy(json_data):
+def calculate_policy(json_data):
     age = json_data['age']
     dependents = json_data['dependents']
     house = json_data.get('house', None)
@@ -104,17 +105,17 @@ def calculate_apolicy(json_data):
 
     base_risk = calculate_base_risk(risk, age, income)
 
-    auto_apolicy = calculate_auto_risk(base_risk, vehicle)
-    disability_apolicy = calculate_disability_risk(base_risk, income, age, house, dependents, marital_status)
-    home_apolicy = calculate_home_risk(base_risk, house)
-    life_apolicy = calculate_life_risk(base_risk, age, dependents, marital_status)
+    auto_policy = calculate_auto_risk(base_risk, vehicle)
+    disability_policy = calculate_disability_risk(base_risk, income, age, house, dependents, marital_status)
+    home_policy = calculate_home_risk(base_risk, house)
+    life_policy = calculate_life_risk(base_risk, age, dependents, marital_status)
 
     response = {
-        "base_risk": base_risk,
-        "auto": adapt_apolicy(auto_apolicy),
-        "disability": adapt_apolicy(disability_apolicy),
-        "home": adapt_apolicy(home_apolicy),
-        "life": adapt_apolicy(life_apolicy)
+        # 'base_risk': base_risk,
+        'auto': adapt_policy(auto_policy),
+        'disability': adapt_policy(disability_policy),
+        'home': adapt_policy(home_policy),
+        'life': adapt_policy(life_policy)
     }
 
     return response

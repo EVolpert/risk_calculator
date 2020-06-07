@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.views.generic import View
 from django.middleware.csrf import get_token
 
-from calculator.services import calculate_apolicy
+from calculator.services import calculate_policy
 
 class RiskCalculator(View):
     def post(self, request):
@@ -15,7 +15,7 @@ class RiskCalculator(View):
         except JSONDecodeError :
             request_data = None
 
-        response = calculate_apolicy(request_data)
+        response = calculate_policy(request_data)
 
         return JsonResponse(response)
 
