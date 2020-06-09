@@ -111,7 +111,6 @@ def calculate_policy(json_data):
     life_policy = calculate_life_risk(base_risk, age, dependents, marital_status)
 
     response = {
-        # 'base_risk': base_risk,
         'auto': adapt_policy(auto_policy),
         'disability': adapt_policy(disability_policy),
         'home': adapt_policy(home_policy),
