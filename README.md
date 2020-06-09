@@ -19,7 +19,8 @@ Caso contrário
 
 ## Iniciando o projeto
 Rode o pipenv na raíz do projeto onde estão os arquivos Pipfile e Pipfile.lock com o comando ```pipenv install```
-Isso irá instalar todas as dependência internas do projeto e iniciar um virtualenv para rodá-lo
+Isso irá instalar todas as dependência internas do projeto
+Inicie o virtualenv do pipenv com o comando ```pipenv shell```
 Vá para a pasta raíz da aplicação em ```risk_calculator```
 Atualize as migrações padrões do django através do comando ```python manage.py migrate```
 Inicie o servidor do projeto com o comando ```python manage.py runserver```
